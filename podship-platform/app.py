@@ -14,16 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from firenado.config import load_yaml_config_file
 import firenado.tornadoweb
 
 
-class IndexHandler(firenado.tornadoweb.TornadoHandler):
+import os
+import logging
+import tornado
+from . import handlers
 
-    def get(self):
-        self.render('index.html')
+
+logger = logging.getLogger(__name__)
 
 
-class LoginHandler(firenado.tornadoweb.TornadoHandler):
+class PlatformTestComponent(firenado.tornadoweb.TornadoComponent):
 
-    def get(self):
-        self.render('login.html')
+    def get_handlers(self):
+        assets_path = os.path.join(os.path.dirname(__file__), 'assets')
+        return [
+            (r'/', handlers.IndexHandler),
+            (r'/login', handlers.LoginHandler),
+            (r'/locales/([A-Za-z0-9-_]+).json?', handlers.LocaleHandler),
+        ]
